@@ -26,6 +26,7 @@ THE SOFTWARE.
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -37,16 +38,16 @@ import (
 )
 
 const (
-	VERSION          = "0.1"
-	DEFAULT_REFRESH  = 5 // default refresh interval in seconds
-	DEFAULT_WEB_ADDR = "0.0.0.0:8080"
-	HISTORY_LENGTH   = 10 * 60 / DEFAULT_REFRESH // for 10 minutes
+	VERSION         = "0.1"
+	DEFAULT_REFRESH = 5                         // default refresh interval in seconds
+	HISTORY_LENGTH  = 10 * 60 / DEFAULT_REFRESH // for 10 minutes
 )
 
 var (
 	currentUser   *user.User
 	sshConfigRead bool
 	allStats      *HostStats
+	portFlag      = flag.Int("port", 8080, "The listening port.")
 )
 
 func usage(code int) {
@@ -68,7 +69,9 @@ will show 10 minutes of history.
 
 func main() {
 
-	if len(os.Args) == 1 {
+	flag.Parse()
+
+	if len(flag.Args()) < 1 {
 		usage(1)
 	}
 
@@ -91,7 +94,7 @@ func main() {
 
 	// start connecting
 	allStats = NewHostStats(HISTORY_LENGTH)
-	for _, host := range os.Args[1:] {
+	for _, host := range flag.Args() {
 		go doHost(host)
 	}
 
