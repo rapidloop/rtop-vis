@@ -145,5 +145,9 @@ func parseSshConfig(path string) bool {
 			}
 		}
 	}
+	if err = s.Err(); err != nil {
+		log.Printf("warning: %v\n", err)
+		return false
+	}
 	return true
 }
