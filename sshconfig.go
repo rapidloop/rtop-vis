@@ -124,7 +124,7 @@ func parseSshConfig(path string) bool {
 		}
 		if len(parts) == 2 {
 			switch parts[0] {
-			case "Hostname":
+			case "HostName":
 				update(func(s *Section) {
 					s.Hostname = parts[1]
 				})
