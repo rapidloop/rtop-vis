@@ -123,22 +123,22 @@ func parseSshConfig(path string) bool {
 			}
 		}
 		if len(parts) == 2 {
-			switch parts[0] {
-			case "HostName":
+			switch strings.ToLower(parts[0]) {
+			case "hostname":
 				update(func(s *Section) {
 					s.Hostname = parts[1]
 				})
-			case "Port":
+			case "port":
 				if p, err := strconv.Atoi(parts[1]); err == nil {
 					update(func(s *Section) {
 						s.Port = p
 					})
 				}
-			case "User":
+			case "user":
 				update(func(s *Section) {
 					s.User = parts[1]
 				})
-			case "IdentityFile":
+			case "identityfile":
 				update(func(s *Section) {
 					s.IdentityFile = parts[1]
 				})
