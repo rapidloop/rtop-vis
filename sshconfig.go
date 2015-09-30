@@ -107,7 +107,7 @@ func parseSshConfig(path string) bool {
 			continue
 		}
 		parts := strings.Fields(line)
-		if len(parts) > 1 && parts[0] == "Host" {
+		if len(parts) > 1 && strings.ToLower(parts[0]) == "host" {
 			hosts := parts[1:]
 			for _, h := range hosts {
 				if _, ok := HostInfo[h]; !ok {
