@@ -26,6 +26,7 @@ THE SOFTWARE.
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -54,8 +55,10 @@ func usage(code int) {
 		`rtop-vis %s - (c) 2015 RapidLoop - MIT Licensed - http://rtop-monitor.org/rtop-vis
 rtop-vis monitors system stats for a cluster over SSH
 
-Usage: rtop-vis host [host ...]
+Usage: rtop-vis [-ssh_config=/etc/ssh/ssh_config] host [host ...]
 
+    ssh_config
+	absolute path to an SSH config file
     host
         one or more host to monitor, "ssh host" should work without password
 
@@ -68,14 +71,9 @@ will show 10 minutes of history.
 
 func main() {
 
-	if len(os.Args) == 1 {
-		usage(1)
-	}
-
 	log.SetPrefix("rtop-vis: ")
 	log.SetFlags(0)
 
-	// get current user
 	var err error
 	currentUser, err = user.Current()
 	if err != nil {
@@ -83,15 +81,31 @@ func main() {
 		return
 	}
 
+	defaultSSHConfig := filepath.Join(currentUser.HomeDir, ".ssh", "config")
+	cfgSSHPtr := flag.String(
+		"ssh_config", 
+		defaultSSHConfig, 
+		fmt.Sprintf(
+			"Absolute path to ssh config file. Default: %s", 
+			defaultSSHConfig,
+		),
+	)
+	flag.Parse()
+
+	sshConfig := *cfgSSHPtr
+
+	if len(flag.Args()) == 0 {
+		usage(1)
+	}
+
 	// read from ~/.ssh/config if possible
-	sshConfig := filepath.Join(currentUser.HomeDir, ".ssh", "config")
 	if _, err := os.Stat(sshConfig); err == nil {
 		sshConfigRead = parseSshConfig(sshConfig)
 	}
 
 	// start connecting
 	allStats = NewHostStats(HISTORY_LENGTH)
-	for _, host := range os.Args[1:] {
+	for _, host := range flag.Args() {
 		go doHost(host)
 	}
 
