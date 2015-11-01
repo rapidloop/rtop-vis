@@ -47,18 +47,18 @@ type Stats struct {
 	MemCached  uint64
 }
 
-func getAllStats(client *ssh.Client, stats *Stats) {
-	getHostname(client, stats)
+func getAllStats(host string, client *ssh.Client, stats *Stats) {
+	getHostname(host, client, stats)
 	getLoad(client, stats)
 	getMemInfo(client, stats)
 }
 
-func getHostname(client *ssh.Client, stats *Stats) (err error) {
+func getHostname(host string, client *ssh.Client, stats *Stats) (err error) {
 	hostname, err := runCommand(client, "/bin/hostname -f")
 	if err != nil {
+		stats.Hostname = strings.TrimSpace(host)
 		return
 	}
-
 	stats.Hostname = strings.TrimSpace(hostname)
 	return
 }
