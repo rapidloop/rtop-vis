@@ -155,7 +155,7 @@ func doHost(host string) {
 
 	for {
 		stats := Stats{At: time.Now()}
-		getAllStats(client, &stats)
+		getAllStats(host, client, &stats)
 		allStats.GetRing(stats.Hostname).Add(stats)
 		time.Sleep(DEFAULT_REFRESH * time.Second)
 	}
