@@ -26,6 +26,7 @@ THE SOFTWARE.
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -33,10 +34,10 @@ import (
 
 var tmpl *template.Template
 
-func startWeb() {
+func startWeb(port int) {
 	tmpl = template.Must(template.New(".").Parse(html))
 	http.HandleFunc("/", webServer)
-	log.Fatal(http.ListenAndServe(DEFAULT_WEB_ADDR, nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", DEFAULT_INTERFACE, port), nil))
 }
 
 func webServer(w http.ResponseWriter, r *http.Request) {
